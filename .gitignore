@@ -4,4 +4,3 @@ typings
 npm-debug.log
 app/**/*.css
 app/**/*.js*
-dist

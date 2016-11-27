@@ -2,7 +2,7 @@
   "name": "angular-quickstart",
   "version": "1.0.0",
   "scripts": {
-    "start": "concurrently --kill-others \"lite-server\"",
+    "start": "concurrently --kill-others \"gulp watch\" \"lite-server\"",
     "aot": "ngc -p tsconfig-aot.json",
     "rollup": "rollup -c rollup-config.js",
     "build": "npm run aot && npm run rollup && gulp build",

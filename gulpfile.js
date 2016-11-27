@@ -28,7 +28,7 @@ let polyfillsBundleFilename = `polyfills.bundle${buildTime}.js`;
 let appBundleFilename = `app.bundle${buildTime}.js`;
 
 gulp.task('clean', (callback) => {
-  return del(['dist'], callback);
+  return del(['dist/**/*', '!dist/bundle.js'], callback);
 });
 
 gulp.task('compile-ts', ['tslint'], () => {
@@ -37,14 +37,6 @@ gulp.task('compile-ts', ['tslint'], () => {
     .pipe(tsc(tsProject));
   return tsResult.js
     .pipe(sourcemaps.write('.', {sourceRoot: '/app'}))
-    .pipe(gulp.dest('app'));
-});
-
-gulp.task('compile-ts:prod', () => {
-  let tsResult = gulp.src(['app/**/*.ts', '!app/config/environments/*.ts'])
-    .pipe(inlineNg2Template({useRelativePaths: true, removeLineBreaks: true, templateProcessor: minifyTemplate}))
-    .pipe(tsc(tsProject));
-  return tsResult.js
     .pipe(gulp.dest('app'));
 });
 
@@ -68,6 +60,16 @@ gulp.task('resources', () => {
   ]).pipe(gulp.dest('dist'));
 });
 
+gulp.task('rename-bundle', () => {
+  return gulp.src(`dist/bundle.js`)
+    .pipe(rename(appBundleFilename))
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('clean-bundle', (callback) => {
+  return del(['dist/bundle.js'], callback);
+});
+
 gulp.task('bundle-styles', () => {
   return gulp.src('app/styles/**/*.css')
     .pipe(concatCss(stylesBundleFilename))
@@ -84,21 +86,6 @@ gulp.task('bundle-polyfills', () => {
     .pipe(concat(polyfillsBundleFilename))
     .pipe(uglify())
     .pipe(gulp.dest('dist'));
-});
-
-gulp.task('bundle-app', (callback) => {
-  const Builder = require('systemjs-builder');
-  const builder = new Builder();
-
-  builder.loadConfig('./systemjs.config.js').then(() => {
-    builder.buildStatic('./app/**/*.js', `dist/${appBundleFilename}`, { minify: true, sourceMaps: false })
-      .then(function() {
-        callback();
-      })
-      .catch(function(err) {
-        console.log('error ' + err);
-      });
-  });
 });
 
 gulp.task('html-replace', () => {
@@ -125,12 +112,12 @@ gulp.task('watch', ['compile-ts', 'compile-sass'], () => {
 gulp.task('build', (callback) => {
   runSequence(
     'clean',
-    'compile-ts:prod',
     'compile-sass',
     'bundle-polyfills',
-    'bundle-app',
     'bundle-styles',
     'resources',
+    'rename-bundle',
+    'clean-bundle',
     'html-replace',
     callback
   );

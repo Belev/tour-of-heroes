@@ -79,7 +79,6 @@ gulp.task('bundle-polyfills', () => {
   return gulp.src([
     'core-js/client/shim.min.js',
     'zone.js/dist/zone.js',
-    'reflect-metadata/Reflect.js',
   ], {cwd: 'node_modules/**'})
     .pipe(concat(polyfillsBundleFilename))
     .pipe(uglify())

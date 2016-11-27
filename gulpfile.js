@@ -8,8 +8,6 @@ const rename = require('gulp-rename');
 const runSequence = require('run-sequence');
 
 const tsc = require('gulp-typescript');
-const inlineNg2Template = require('gulp-inline-ng2-template');
-const htmlMinifier = require('html-minifier');
 const sourcemaps = require('gulp-sourcemaps');
 const tsProject = tsc.createProject('tsconfig.json');
 const tslint = require('gulp-tslint');
@@ -122,18 +120,3 @@ gulp.task('build', (callback) => {
     callback
   );
 });
-
-function minifyTemplate(path, ext, file, done) {
-  try {
-    let minifiedFile = htmlMinifier.minify(file, {
-      collapseWhitespace: true,
-      caseSensitive: true,
-      removeComments: true,
-      removeRedundantAttributes: true
-    });
-    done(null, minifiedFile);
-  }
-  catch (err) {
-    done(err);
-  }
-}

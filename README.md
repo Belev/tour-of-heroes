@@ -4,6 +4,8 @@ Building the app while reading the Angular 2 Tour of Heroes tutorial: [link](htt
 
 Run the [live example](http://belev.github.io/tour-of-heroes/)
 
+The live example uses AoT compilation and tree shaking.
+
 ## To run the application:
 
 ```
